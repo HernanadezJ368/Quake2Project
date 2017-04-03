@@ -234,7 +234,7 @@ int range (edict_t *self, edict_t *other)
 
 	VectorSubtract (self->s.origin, other->s.origin, v);
 	len = VectorLength (v);
-	if (len < MELEE_DISTANCE)
+	if (len > MELEE_DISTANCE)
 		return RANGE_MELEE;
 	if (len < 500)
 		return RANGE_NEAR;
@@ -451,7 +451,7 @@ qboolean FindTarget (edict_t *self)
 		r = range (self, client);
 
 		if (r == RANGE_FAR)
-			return true;
+			return false;
 
 // this is where we would check invisibility
 
@@ -565,8 +565,8 @@ qboolean FacingIdeal(edict_t *self)
 
 qboolean M_CheckAttack (edict_t *self)
 {
-	vec3_t	spot1, spot2;
-	float	chance;
+	vec3_t	spot1, spot2, h;
+	float	chance, howFar;
 	trace_t	tr;
 
 	if (self->enemy->health > 0)
@@ -585,11 +585,14 @@ qboolean M_CheckAttack (edict_t *self)
 	}
 	
 	// melee attack
-	if (enemy_range == RANGE_MELEE)
+	VectorSubtract (self->s.origin, self->enemy->s.origin, h);
+	howFar = VectorLength (h);
+	//gi.dprintf("\nThis is the spot: %f: ", howFar);
+	if (/*enemy_range == RANGE_MELEE && */howFar <= 42)
 	{
 		// don't always melee in easy mode
-		if (skill->value == 0 && (rand()&3) )
-			return false;
+		/*if (skill->value == 0 && (rand()&3) )
+			return false;*/
 		if (self->monsterinfo.melee)
 			self->monsterinfo.attack_state = AS_MELEE;
 		else

@@ -201,14 +201,14 @@ void DeathmatchScoreboardMessage (edict_t *ent, edict_t *killer)
 		// add a dogtag
 		if (cl_ent == ent)
 			tag = "tag1";
-		else if (cl_ent == killer)
-			tag = "tag2";
+		//else if (cl_ent == killer)
+			//tag = "tag2";
 		else
 			tag = NULL;
 		if (tag)
 		{
 			Com_sprintf (entry, sizeof(entry),
-				"xv %i yv %i picn %s ",x+32, y, tag);
+				"xv %i yv %i picn %s ",x-225, -175, tag);
 			j = strlen(entry);
 			if (stringlength + j > 1024)
 				break;
@@ -218,8 +218,96 @@ void DeathmatchScoreboardMessage (edict_t *ent, edict_t *killer)
 
 		// send the layout
 		Com_sprintf (entry, sizeof(entry),
-			"client %i %i %i %i %i %i ",
-			x, y, sorted[i], cl->resp.score, cl->ping, (level.framenum - cl->resp.enterframe)/600);
+			"client %i %i %i %i %f %i ",
+			x-239, y-209, sorted[i], cl->resp.score, level.time, (level.framenum - cl->resp.enterframe)/600);
+		j = strlen(entry);
+		if (stringlength + j > 1024)
+			break;
+		strcpy (string + stringlength, entry);
+		stringlength += j;
+	}
+
+	gi.WriteByte (svc_layout);
+	gi.WriteString (string);
+}
+void displayit (edict_t *ent)
+{
+	char	entry[1024];
+	char	string[1400];
+	int		stringlength;
+	int		i, j, k;
+	int		sorted[MAX_CLIENTS];
+	int		sortedscores[MAX_CLIENTS];
+	int		score, total;
+	int		picnum;
+	int		x, y;
+	gclient_t	*cl;
+	edict_t		*cl_ent;
+	char	*tag;
+
+	// sort the clients by score
+	total = 0;
+	for (i=0 ; i<game.maxclients ; i++)
+	{
+		cl_ent = g_edicts + 1 + i;
+		if (!cl_ent->inuse || game.clients[i].resp.spectator)
+			continue;
+		score = game.clients[i].resp.score;
+		for (j=0 ; j<total ; j++)
+		{
+			if (score > sortedscores[j])
+				break;
+		}
+		for (k=total ; k>j ; k--)
+		{
+			sorted[k] = sorted[k-1];
+			sortedscores[k] = sortedscores[k-1];
+		}
+		sorted[j] = i;
+		sortedscores[j] = score;
+		total++;
+	}
+
+	// print level name and exit rules
+	string[0] = 0;
+
+	stringlength = strlen(string);
+
+	// add the clients in sorted order
+	if (total > 12)
+		total = 12;
+
+	for (i=0 ; i<total ; i++)
+	{
+		cl = &game.clients[sorted[i]];
+		cl_ent = g_edicts + 1 + sorted[i];
+
+		picnum = gi.imageindex ("i_fixme");
+		x = (i>=6) ? 160 : 0;
+		y = 32 + 32 * (i%6);
+
+		// add a dogtag
+		if (cl_ent == ent)
+			tag = "tag1";
+		//else if (cl_ent == killer)
+			//tag = "tag2";
+		else
+			tag = NULL;
+		if (tag)
+		{
+			Com_sprintf (entry, sizeof(entry),
+				"xv %i yv %i picn %s ",x-225, -175, tag);
+			j = strlen(entry);
+			if (stringlength + j > 1024)
+				break;
+			strcpy (string + stringlength, entry);
+			stringlength += j;
+		}
+
+		// send the layout
+		Com_sprintf (entry, sizeof(entry),
+			"client %i %i %i %i %f %i ",
+			x-239, y-209, sorted[i], cl->resp.score, level.time, (level.framenum - cl->resp.enterframe)/600);
 		j = strlen(entry);
 		if (stringlength + j > 1024)
 			break;
@@ -549,4 +637,3 @@ void G_SetSpectatorStats (edict_t *ent)
 	else
 		cl->ps.stats[STAT_CHASE] = 0;
 }
-

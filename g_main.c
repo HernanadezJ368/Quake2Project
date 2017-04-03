@@ -213,6 +213,7 @@ void EndDMLevel (void)
 	// see if it's in the map list
 	if (*sv_maplist->string) {
 		s = strdup(sv_maplist->string);
+		gi.dprintf(sv_maplist->string);
 		f = NULL;
 		t = strtok(s, seps);
 		while (t != NULL) {
@@ -359,6 +360,7 @@ G_RunFrame
 Advances the world by 0.1 seconds
 ================
 */
+char	*vtos (vec3_t v);
 void G_RunFrame (void)
 {
 	int		i;
@@ -377,7 +379,7 @@ void G_RunFrame (void)
 		ExitLevel ();
 		return;
 	}
-
+	
 	//
 	// treat each object in turn
 	// even the world gets a chance to think
@@ -405,6 +407,8 @@ void G_RunFrame (void)
 		if (i > 0 && i <= maxclients->value)
 		{
 			ClientBeginServerFrame (ent);
+			//gi.dprintf("\n");
+			//gi.dprintf(vtos(ent->s.origin));
 			continue;
 		}
 

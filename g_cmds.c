@@ -879,11 +879,11 @@ void Cmd_PlayerList_f(edict_t *ent)
 	}
 	gi.cprintf(ent, PRINT_HIGH, "%s", text);
 }
-/*void Cmd_Aammo_Toggle(edict_t *self)
+void Cmd_Show_Rules_f(edict_t *self)
 {
-	if(!self)return; //check to see if pointer given is valid
-	if(self->ammo_toggle)self->ammo_toggle = 0;
-}*/
+	gi.centerprintf(self, "WELCOME TO NOT A COD ZOMBIEZ RIP-OFF\n"
+							"Game Rules:"	);
+}
 
 /*
 =================
@@ -932,8 +932,6 @@ void ClientCommand (edict_t *ent)
 		Cmd_Use_f (ent);
 	else if (Q_stricmp (cmd, "drop") == 0)
 		Cmd_Drop_f (ent);
-	/*else if (Q_stricmp (cmd, "toggle") == 0)
-		Cmd_ammo_toggle (ent);*/
 	else if (Q_stricmp (cmd, "give") == 0)
 		Cmd_Give_f (ent);
 	else if (Q_stricmp (cmd, "god") == 0)
@@ -942,8 +940,8 @@ void ClientCommand (edict_t *ent)
 		Cmd_Notarget_f (ent);
 	else if (Q_stricmp (cmd, "noclip") == 0)
 		Cmd_Noclip_f (ent);
-	else if (Q_stricmp (cmd, "inven") == 0)
-		Cmd_Inven_f (ent);
+	else if (Q_stricmp (cmd, "showrules") == 0)
+		Cmd_Show_Rules_f(ent);
 	else if (Q_stricmp (cmd, "invnext") == 0)
 		SelectNextItem (ent, -1);
 	else if (Q_stricmp (cmd, "invprev") == 0)
