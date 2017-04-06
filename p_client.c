@@ -4,10 +4,10 @@
 #define isOff 0;
 static int counter = 0;
 static int buffer = 0;
-static int firstFlag = 1; 
+static int bufferFlag = 1; 
 static int randomIncrease = 0;
 static int hasplayerSpawned = 0;
-static int nowtphim = 0;
+static int TPPlayer = 0;
 static int countdown = 0;
 static int currentWave = 0;
 void ClientUserinfoChanged (edict_t *ent, char *userinfo);
@@ -1754,39 +1754,165 @@ This will be called once for each server frame, before running
 any other entities in the world.
 ==============
 */
-void WaveOne (void)
-{
-
-}
-void WaveTwo (void)
-{
-
-}
-void WaveThree (void)
-{
-
-}
-void WaveFour (void)
-{
-
-}
-void WaveFive (void)
-{
-
-}
-void beginningCountdown(edict_t *Slayer)
-{
-	static int gameStartCountdown = 10; //DISPLAYS A 10 SECOND COUNTDOWN TO BEGGINING OF THE MATCH
-	if (gameStartCountdown > 0)	
-		gi.centerprintf(Slayer, "The game will begin in... %d\nPress TAB for rules", gameStartCountdown);	
-	gameStartCountdown--;
-}
 void Cmd_Give_f (edict_t *ent);
 void SP_monster_berserk (edict_t *self);
 void Cmd_Give_f (edict_t *ent);
 //void SpawnItem (edict_t *ent, gitem_t *item);
-void DeathmatchScoreboard (edict_t *ent);
+//void DeathmatchScoreboard (edict_t *ent);
 edict_t *CreateTargetChangeLevel(char *map);
+void spawnMobs ()
+{
+	int x, y, z;
+	int monsterNum;
+	edict_t *Mob;
+	for (monsterNum = 0; monsterNum < 5; monsterNum++)
+	{
+		Mob = G_Spawn();
+		SP_monster_berserk(Mob);
+		switch(monsterNum){
+		case 0:
+			x = -1272;
+			y = 130;
+			z = -103;
+			break;
+		case 1:
+			x = -1601;
+			y = 283;
+			z = -103;
+			break;
+		case 2:
+			x = -1590;
+			y = -228;
+			z = -103;
+			break;
+		case 3:
+			x = -1334;
+			y = -145;
+			z = -103;
+			break;
+		case 4:
+			x = -1371;
+			y = -398;
+			z = -103;
+			break;
+		}
+		Mob->s.origin[0]= x;
+		Mob->s.origin[1]= y; 
+		Mob->s.origin[2]= z;
+		gi.linkentity(Mob);
+	}
+}
+/*
+	////////////////WAVE 1////////////////////
+*/
+void WaveOne (edict_t *PLAYER)
+{
+	if(bufferFlag == 1 || level.time > buffer)
+	{
+		spawnMobs();
+		buffer = level.time + 10;
+		bufferFlag = 0;
+	}
+	if(level.time > 180)
+	{
+		currentWave = 2;
+		gi.centerprintf(PLAYER, "Welcome to wave %d", currentWave);
+		bufferFlag = 1;
+	}
+}
+/*
+	//////////////////WAVE 2///////////////////////
+*/
+void WaveTwo (edict_t *PLAYER)
+{
+	if(bufferFlag == 1 || level.time > buffer)
+	{
+		spawnMobs();
+		buffer = level.time + 5;
+		bufferFlag = 0;
+	}
+	if(level.time > 360)
+	{
+		currentWave = 3;
+		gi.centerprintf(PLAYER, "Welcome to wave %d", currentWave);
+		bufferFlag = 1;
+	}
+}
+/*
+	/////////////////WAVE 3//////////////////
+*/
+void WaveThree (edict_t *PLAYER)
+{
+	if(bufferFlag == 1 || level.time > buffer)
+	{
+		spawnMobs();
+		buffer = level.time + 5;
+		bufferFlag = 0;
+	}
+	if(level.time > 540)
+	{
+		currentWave = 4;
+		gi.centerprintf(PLAYER, "Welcome to wave %d", currentWave);
+		bufferFlag = 1;
+	}
+}
+/*
+	///////////////////WAVE 4///////////////////
+*/
+void WaveFour (edict_t *PLAYER)
+{
+	if(bufferFlag == 1 || level.time > buffer)
+	{
+		spawnMobs();
+		buffer = level.time + 5;
+		bufferFlag = 0;
+	}
+	if(level.time > 720)
+	{
+		currentWave = 5;
+		gi.centerprintf(PLAYER, "Welcome to wave %d", currentWave);
+		bufferFlag = 1;
+	}
+}	
+/*
+	/////////////////FINAL WAVE////////////////////
+*/
+void WaveFive (edict_t *PLAYER)
+{
+		//if(level.time > 25)		
+}
+void killHimHesRogue (edict_t *PLAYER)
+{
+	if(PLAYER->s.origin[2] > -65)
+	{
+		gi.centerprintf(PLAYER, "Follow directions idiot\n YOU KILLED: %d", PLAYER->client->resp.score);
+		PLAYER->deadflag = DEAD_DEAD;
+	}
+}
+void TpToStartingSpot (edict_t *PLAYER)
+{
+	PLAYER->s.origin[0] = -1902;
+	PLAYER->s.origin[1] = 26;
+	PLAYER->s.origin[2] = -103;
+}
+void changeWorlds ()
+{
+	BeginIntermission (CreateTargetChangeLevel ("ware1") );
+	hasplayerSpawned = 1;
+}
+void beginningCountdown(edict_t *PLAYER)
+{
+	static int gameStartCountdown = 10; //DISPLAYS A 10 SECOND COUNTDOWN TO BEGGINING OF THE MATCH
+	if (gameStartCountdown > 0)	
+		gi.centerprintf(PLAYER, "The game will begin in... %d", gameStartCountdown);
+		if(gameStartCountdown == 1)
+		{
+			currentWave = 1;
+			gi.centerprintf(PLAYER, "Welcome to wave %d\n[PRESS TAB FOR RULES]", currentWave);
+
+		}
+	gameStartCountdown--;
+}
 //---------------------------------------------------------------------------------------
 
 /*
@@ -1800,21 +1926,7 @@ it = FindItem("Rocket Launcher");
 */
 
 //---------------------------------------------------------------------------------------
-	/*if(ent->s.origin[2] > -40)
-	{
-		gi.centerprintf(ent, "Follow directions idiot");                WILL KILL PLAYER OF ABOVE WHERE HES SUPPOSED TO BE
-		ent->deadflag = DEAD_DEAD;
-	}*/
-//---------------------------------------------------------------------------------------
-	/*BeginIntermission (CreateTargetChangeLevel ("ware1") );			TAKES PLAYER TO WAREHOUSE
-		hasplayerSpawned = 1;*/
-//---------------------------------------------------------------------------------------
-	/*
-		ent->s.origin[0] = -1902;
-		ent->s.origin[1] = 26;					TPS PLAYER TO STARTING POINT
-		ent->s.origin[2] = -103;
-	*/
-//---------------------------------------------------------------------------------------
+
 void ClientBeginServerFrame (edict_t *ent) //BEGINNING OF GAME
 {
 	edict_t *monster;
@@ -1823,39 +1935,30 @@ void ClientBeginServerFrame (edict_t *ent) //BEGINNING OF GAME
 	edict_t *item;
 	gitem_t		*it;
 	int			buttonMask;
-	if (hasplayerSpawned == 0){
-	
-	}
-	nowtphim += 1; // INCREASES THE TO TIMER (SERVES AS BUFFER TO TP PLAYER TO STARTING POINT)
-	if(nowtphim == 25)
+	if (hasplayerSpawned == 0)
 	{
-		//TP PLAYER TO STARTING POINT
+		changeWorlds();
 	}
-	DeathmatchScoreboard (ent);
+	TPPlayer += 1; // INCREASES THE TO TIMER (SERVES AS BUFFER TO TP PLAYER TO STARTING POINT)
+	if(TPPlayer == 25)
+	{
+		TpToStartingSpot (ent);
+	}
+	//DeathmatchScoreboard (ent);
 	if(currentWave == 1){
-		WaveOne();
-		if(level.time == 180)
-			currentWave = 2;
+		WaveOne(ent);
 	}
 	if(currentWave == 2){
-		WaveTwo();
-		if(level.time == 360)
-			currentWave = 3;
+		WaveTwo(ent);
 	}
 	if(currentWave == 3){
-		WaveThree();
-		if(level.time == 360)
-			currentWave = 4;
+		WaveThree(ent);
 	}
 	if(currentWave == 4){
-		WaveFour();
-		if(level.time == 360)
-			currentWave = 5;
+		WaveFour(ent);
 	}
 	if(currentWave == 5){
-		WaveFive();
-		if(level.time == 360)
-			currentWave = 6;
+		WaveFive(ent);
 	}
 	//deathMatchMessage(ent);
 	//gi.dprintf("%s\n", level.nextmap);
@@ -1868,46 +1971,19 @@ void ClientBeginServerFrame (edict_t *ent) //BEGINNING OF GAME
 	//if (item->inuse)
 		//G_FreeEdict(item);
 	//respawn(ent);
-	if(nowtphim > 25)
+	if(TPPlayer > 25)
 	{
-		//KILL HIM IF HES TRYING TO ESCAPE ONLY IF HE HAS BEEN TPED
+		killHimHesRogue (ent);
 	}
-	if(firstFlag == 1 || level.time > buffer)
+	if(bufferFlag == 1 || level.time > buffer)
 	{
 		beginningCountdown(ent);
-		//gi.dprintf("%f\n", level.time);
-		//gi.dprintf("position: \n", vtos(ent->s.origin));
-
-		//BeginIntermission (CreateTargetChangeLevel ("ware1") );
-		//gi.dprintf("%s\n",level.level_name);
 		buffer = level.time + 1;
-		firstFlag = 0;
-		/*monster = G_Spawn();
-		SP_monster_berserk(monster);
-		counter++;
-		gi.dprintf("\n%d--------", counter);
-		randomIncrease = rand() % 205;*/
-		//gi.dprintf("%d\n", randomIncrease);
-		//monster->s.origin[0]= -565; //WEST/EAST
-		//- rand() % -100;
-		//monster->s.origin[1]= 253 + randomIncrease; //NORTH/SOUTH
-		//monster->s.origin[2]= -23;
-		//SP_monster_soldier_ss(monster);
-		//gi.linkentity(ent);
+		bufferFlag = 0;
 	}
 	//Cmd_Help_f(ent);
 	//Cmd_Score_f (ent);
-	DeathmatchScoreboardMessage (ent, NULL);
-	/*gi.dprintf("%f\n",level.time);
-	//000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-	//monster = G_Spawn();
-	//SP_monster_soldier_ss(monster);
-	//monster->s.origin[0]= 0 - rand() % -400;
-	- rand() % -100;
-	monster->s.origin[1]= 0 - rand() % -400;
-	monster->s.origin[2]= 0;
-	gi.linkentity(ent);
-	SP_monster_soldier_ss(monster);*/
+	//DeathmatchScoreboardMessage (ent, NULL);
 
 	if (level.intermissiontime)
 		return;

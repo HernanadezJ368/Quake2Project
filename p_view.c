@@ -13,7 +13,7 @@ float	xyspeed;
 float	bobmove;
 int		bobcycle;		// odd cycles are right foot going forward
 float	bobfracsin;		// sin(bobfrac*M_PI)
-
+void HelpComputer (edict_t *ent);
 /*
 ===============
 SV_CalcRoll
@@ -1062,6 +1062,11 @@ void ClientEndServerFrame (edict_t *ent)
 	if (ent->client->showscores && !(level.framenum & 31) )
 	{
 		DeathmatchScoreboardMessage (ent, ent->enemy);
+		gi.unicast (ent, false);
+	}
+	if (ent->client->showhelp && !(level.framenum & 5) )
+	{
+		HelpComputer (ent);
 		gi.unicast (ent, false);
 	}
 }

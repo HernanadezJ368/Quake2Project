@@ -194,17 +194,18 @@ void DeathmatchScoreboardMessage (edict_t *ent, edict_t *killer)
 		cl = &game.clients[sorted[i]];
 		cl_ent = g_edicts + 1 + sorted[i];
 
-		picnum = gi.imageindex ("i_fixme");
+		//picnum = gi.imageindex ("i_fixme");
 		x = (i>=6) ? 160 : 0;
 		y = 32 + 32 * (i%6);
+		//gi.centerprintf(ent, "%i", y);
 
 		// add a dogtag
-		if (cl_ent == ent)
-			tag = "tag1";
+		//if (cl_ent == ent)
+		tag = "tag2";
 		//else if (cl_ent == killer)
 			//tag = "tag2";
-		else
-			tag = NULL;
+		//else
+			//tag = NULL;
 		if (tag)
 		{
 			Com_sprintf (entry, sizeof(entry),
@@ -218,105 +219,19 @@ void DeathmatchScoreboardMessage (edict_t *ent, edict_t *killer)
 
 		// send the layout
 		Com_sprintf (entry, sizeof(entry),
-			"client %i %i %i %i %f %i ",
-			x-239, y-209, sorted[i], cl->resp.score, level.time, (level.framenum - cl->resp.enterframe)/600);
+			"client %i %i %i %i %f %i %i ",
+			x-239, y-209, 1, cl->resp.score, level.time, (level.framenum - cl->resp.enterframe)/600);
 		j = strlen(entry);
 		if (stringlength + j > 1024)
 			break;
 		strcpy (string + stringlength, entry);
 		stringlength += j;
+		//gi.centerprintf(ent, "%i", stringlength);
 	}
 
 	gi.WriteByte (svc_layout);
 	gi.WriteString (string);
-}
-void displayit (edict_t *ent)
-{
-	char	entry[1024];
-	char	string[1400];
-	int		stringlength;
-	int		i, j, k;
-	int		sorted[MAX_CLIENTS];
-	int		sortedscores[MAX_CLIENTS];
-	int		score, total;
-	int		picnum;
-	int		x, y;
-	gclient_t	*cl;
-	edict_t		*cl_ent;
-	char	*tag;
-
-	// sort the clients by score
-	total = 0;
-	for (i=0 ; i<game.maxclients ; i++)
-	{
-		cl_ent = g_edicts + 1 + i;
-		if (!cl_ent->inuse || game.clients[i].resp.spectator)
-			continue;
-		score = game.clients[i].resp.score;
-		for (j=0 ; j<total ; j++)
-		{
-			if (score > sortedscores[j])
-				break;
-		}
-		for (k=total ; k>j ; k--)
-		{
-			sorted[k] = sorted[k-1];
-			sortedscores[k] = sortedscores[k-1];
-		}
-		sorted[j] = i;
-		sortedscores[j] = score;
-		total++;
-	}
-
-	// print level name and exit rules
-	string[0] = 0;
-
-	stringlength = strlen(string);
-
-	// add the clients in sorted order
-	if (total > 12)
-		total = 12;
-
-	for (i=0 ; i<total ; i++)
-	{
-		cl = &game.clients[sorted[i]];
-		cl_ent = g_edicts + 1 + sorted[i];
-
-		picnum = gi.imageindex ("i_fixme");
-		x = (i>=6) ? 160 : 0;
-		y = 32 + 32 * (i%6);
-
-		// add a dogtag
-		if (cl_ent == ent)
-			tag = "tag1";
-		//else if (cl_ent == killer)
-			//tag = "tag2";
-		else
-			tag = NULL;
-		if (tag)
-		{
-			Com_sprintf (entry, sizeof(entry),
-				"xv %i yv %i picn %s ",x-225, -175, tag);
-			j = strlen(entry);
-			if (stringlength + j > 1024)
-				break;
-			strcpy (string + stringlength, entry);
-			stringlength += j;
-		}
-
-		// send the layout
-		Com_sprintf (entry, sizeof(entry),
-			"client %i %i %i %i %f %i ",
-			x-239, y-209, sorted[i], cl->resp.score, level.time, (level.framenum - cl->resp.enterframe)/600);
-		j = strlen(entry);
-		if (stringlength + j > 1024)
-			break;
-		strcpy (string + stringlength, entry);
-		stringlength += j;
-	}
-
-	gi.WriteByte (svc_layout);
-	gi.WriteString (string);
+	//gi.WriteString ("TEST");
 }
 
 
@@ -372,6 +287,7 @@ void HelpComputer (edict_t *ent)
 {
 	char	string[1024];
 	char	*sk;
+	gclient_t	*cl;
 
 	if (skill->value == 0)
 		sk = "easy";
@@ -384,18 +300,18 @@ void HelpComputer (edict_t *ent)
 
 	// send the layout
 	Com_sprintf (string, sizeof(string),
-		"xv 32 yv 8 picn help "			// background
-		"xv 202 yv 12 string2 \"%s\" "		// skill
-		"xv 0 yv 24 cstring2 \"%s\" "		// level name
-		"xv 0 yv 54 cstring2 \"%s\" "		// help 1
-		"xv 0 yv 110 cstring2 \"%s\" "		// help 2
-		"xv 50 yv 164 string2 \" kills     goals    secrets\" "
-		"xv 50 yv 172 string2 \"%3i/%3i     %i/%i       %i/%i\" ", 
+		"xv -225 yv -175 picn inventory "			// background
+		"xv -55 yv -171 string2 \"%s\" "		// skill
+		"xv -257 yv -159 cstring2 \"%f\" "		// level name
+		"xv -257 yv -129 cstring2 \"%s\" "		// help 1
+		"xv -257 yv -73 cstring2 \"%s\" "		// help 2
+		"xv -207 yv -19 string2 \" kills     goals    secrets\" "
+		"xv -207 yv -11 string2 \"  %3i      %i/%i       %i/%i\" ", 
 		sk,
-		level.level_name,
+		level.time,
 		game.helpmessage1,
 		game.helpmessage2,
-		level.killed_monsters, level.total_monsters, 
+		level.killed_monsters, 
 		level.found_goals, level.total_goals,
 		level.found_secrets, level.total_secrets);
 
@@ -415,11 +331,11 @@ Display the current help message
 void Cmd_Help_f (edict_t *ent)
 {
 	// this is for backwards compatability
-	if (deathmatch->value)
-	{
-		Cmd_Score_f (ent);
-		return;
-	}
+	//if (deathmatch->value)
+	//{
+		//Cmd_Score_f (ent);
+		//return;
+	//}
 
 	ent->client->showinventory = false;
 	ent->client->showscores = false;
