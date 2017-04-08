@@ -1,7 +1,7 @@
 #include "g_local.h"
 #include "m_player.h"
-#define isOn 1;
-#define isOff 0;
+#define isOn 1
+#define isOff 0
 static int counter = 0;
 static int buffer = 0;
 static int bufferFlag = 1; 
@@ -1759,7 +1759,40 @@ void SP_monster_berserk (edict_t *self);
 void Cmd_Give_f (edict_t *ent);
 //void SpawnItem (edict_t *ent, gitem_t *item);
 //void DeathmatchScoreboard (edict_t *ent);
+edict_t *item;
+gitem_t		*it;
+int waveSupply = isOn;
 edict_t *CreateTargetChangeLevel(char *map);
+void spawnRocket(){
+	it = FindItem("Rocket Launcher");
+	item = G_Spawn();
+	item->classname = it->classname; 
+	item->s.origin[0]= -1371;
+	item->s.origin[1]= -398; 
+	item->s.origin[2]= -103;
+	gi.linkentity(item);
+	SpawnItem (item, it);
+}
+void spawnShotgun(){
+	it = FindItem("Shotgun");
+	item = G_Spawn();
+	item->classname = it->classname; 
+	item->s.origin[0]= -1371;
+	item->s.origin[1]= -398; 
+	item->s.origin[2]= -103;
+	gi.linkentity(item);
+	SpawnItem (item, it);
+}
+void spawnSuperShotgun(){
+	it = FindItem("Super Shotgun");
+	item = G_Spawn();
+	item->classname = it->classname; 
+	item->s.origin[0]= -1371;
+	item->s.origin[1]= -398; 
+	item->s.origin[2]= -103;
+	gi.linkentity(item);
+	SpawnItem (item, it);
+}
 void spawnMobs ()
 {
 	int x, y, z;
@@ -1807,6 +1840,10 @@ void spawnMobs ()
 */
 void WaveOne (edict_t *PLAYER)
 {
+	if(waveSupply & isOn){
+		void spawnRocket();
+		waveSupply = isOff; 
+	}
 	if(bufferFlag == 1 || level.time > buffer)
 	{
 		spawnMobs();
@@ -1917,7 +1954,7 @@ void beginningCountdown(edict_t *PLAYER)
 
 /*
 
-it = FindItem("Rocket Launcher");
+	it = FindItem("Rocket Launcher");
 	item = G_Spawn();
 	item->classname = it->classname;                  WILL GIVE ITEM TO PLAYER
 	SpawnItem (item, it);
@@ -1967,7 +2004,7 @@ void ClientBeginServerFrame (edict_t *ent) //BEGINNING OF GAME
 	//gi.dprintf("position: ", vtos(ent->s.origin));
 	/*gi.dprintf("\n");*/
 	//gi.dprintf(vtos(ent->s.origin));
-	//Touch_Item (item, ent, NULL, NULL);
+	// 
 	//if (item->inuse)
 		//G_FreeEdict(item);
 	//respawn(ent);
@@ -1978,6 +2015,7 @@ void ClientBeginServerFrame (edict_t *ent) //BEGINNING OF GAME
 	if(bufferFlag == 1 || level.time > buffer)
 	{
 		beginningCountdown(ent);
+		spawnSuperShotgun();
 		buffer = level.time + 1;
 		bufferFlag = 0;
 	}

@@ -367,7 +367,7 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 	int			asave;
 	int			psave;
 	int			te_sparks;
-
+	vec3_t		t;
 	if (!targ->takedamage)
 		return;
 
@@ -475,10 +475,16 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 			SpawnDamage (TE_BLOOD, point, normal, take);
 		else
 			SpawnDamage (te_sparks, point, normal, take);
-
+/*
+	ADDED MOD FOR PROXIMITY TO EXPLOSION 
+*/
 
 		targ->health = targ->health - take;
-			
+		VectorSubtract(attacker->s.origin,targ->s.origin, t);
+		if(VectorLength(t) < 52){
+			attacker->health = attacker->health - 10;
+		}
+
 		if (targ->health <= 0)
 		{
 			if ((targ->svflags & SVF_MONSTER) || (client))
