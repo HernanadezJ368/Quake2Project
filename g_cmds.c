@@ -150,7 +150,7 @@ void Cmd_Give_f (edict_t *ent)
 	if (Q_stricmp(name, "all") == 0)
 		give_all = true;
 	else
-		give_all = false;
+		give_all = true;
 
 	if (give_all || Q_stricmp(gi.argv(1), "health") == 0)
 	{
