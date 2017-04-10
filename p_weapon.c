@@ -1070,7 +1070,7 @@ void Machinegun_Fire (edict_t *ent)
 	AngleVectors (angles, forward, right, NULL);
 	VectorSet(offset, 0, 8, ent->viewheight-8);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
-	fire_bullet (ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_MACHINEGUN);
+	fire_bulletMachineGun (ent, start, forward, 10, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_MACHINEGUN);
 
 	gi.WriteByte (svc_muzzleflash);
 	gi.WriteShort (ent-g_edicts);
@@ -1192,22 +1192,31 @@ void Chaingun_Fire (edict_t *ent)
 		kick *= 4;
 	}
 
-	for (i=0 ; i<3 ; i++)
+	/*for (i=0 ; i<3 ; i++)
 	{
 		ent->client->kick_origin[i] = crandom() * 0.35;
 		ent->client->kick_angles[i] = crandom() * 0.7;
-	}
+	}*/
 
 	for (i=0 ; i<shots ; i++)
 	{
 		// get start / end positions
 		AngleVectors (ent->client->v_angle, forward, right, up);
-		r = 7 + crandom()*4;
-		u = crandom()*4;
+		r = 2;//7 + crandom()*4;
+		u = 5;//crandom()*4;
 		VectorSet(offset, 0, r, u + ent->viewheight-8);
 		P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
-
-		fire_bullet (ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_CHAINGUN);
+		fire_rail (ent, start, forward, damage, kick);
+		fire_rail (ent, start, forward, damage, kick);
+		fire_rail (ent, start, forward, damage, kick);
+		fire_rail (ent, start, forward, damage, kick);
+		fire_rail (ent, start, forward, damage, kick);
+		fire_rail (ent, start, forward, damage, kick);
+		fire_rail (ent, start, forward, damage, kick);
+		fire_rail (ent, start, forward, damage, kick);
+		fire_rail (ent, start, forward, damage, kick);
+		fire_rail (ent, start, forward, damage, kick);
+		//fire_bulletChainGun (ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_CHAINGUN);
 	}
 
 	// send muzzle flash

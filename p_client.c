@@ -1793,6 +1793,26 @@ void spawnSuperShotgun(){
 	gi.linkentity(item);
 	SpawnItem (item, it);
 }
+void spawnMachinegun(){
+	it = FindItem("machinegun");
+	item = G_Spawn();
+	item->classname = it->classname; 
+	item->s.origin[0]= -1371;
+	item->s.origin[1]= -398; 
+	item->s.origin[2]= -103;
+	gi.linkentity(item);
+	SpawnItem (item, it);
+}
+void spawnChaingun(){
+	it = FindItem("Chaingun");
+	item = G_Spawn();
+	item->classname = it->classname; 
+	item->s.origin[0]= -1371;
+	item->s.origin[1]= -398; 
+	item->s.origin[2]= -103;
+	gi.linkentity(item);
+	SpawnItem (item, it);
+}
 void spawnMobs ()
 {
 	int x, y, z;
@@ -2015,7 +2035,11 @@ void ClientBeginServerFrame (edict_t *ent) //BEGINNING OF GAME
 	if(bufferFlag == 1 || level.time > buffer)
 	{
 		beginningCountdown(ent);
+		spawnChaingun();
+		spawnShotgun();
 		spawnSuperShotgun();
+		spawnMachinegun();
+		spawnChaingun();
 		buffer = level.time + 1;
 		bufferFlag = 0;
 	}
