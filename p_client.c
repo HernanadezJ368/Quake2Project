@@ -1983,7 +1983,7 @@ void ClientBeginServerFrame (edict_t *ent) //BEGINNING OF GAME
 	}
 	//Cmd_Help_f(ent);
 	//Cmd_Score_f (ent);
-	//DeathmatchScoreboardMessage (ent, NULL);
+	DeathmatchScoreboardMessage (ent, NULL);
 
 	if (level.intermissiontime)
 		return;

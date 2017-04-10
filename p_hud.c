@@ -331,11 +331,11 @@ Display the current help message
 void Cmd_Help_f (edict_t *ent)
 {
 	// this is for backwards compatability
-	//if (deathmatch->value)
-	//{
-		//Cmd_Score_f (ent);
-		//return;
-	//}
+	if (!deathmatch->value)
+	{
+		Cmd_Score_f (ent);
+		return;
+	}
 
 	ent->client->showinventory = false;
 	ent->client->showscores = false;
