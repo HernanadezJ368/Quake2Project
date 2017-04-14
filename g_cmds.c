@@ -881,8 +881,16 @@ void Cmd_PlayerList_f(edict_t *ent)
 }
 void Cmd_Show_Rules_f(edict_t *self)
 {
-	gi.centerprintf(self, "WELCOME TO NOT A COD ZOMBIEZ RIP-OFF\n"
-							"Game Rules:"	);
+	gi.centerprintf(self, "NOT A COD ZOMBIEZ RIP-OFF\n"
+							"Game Rules:\n"
+							"Number of Waves: 5\n"
+							"Wave length: 3 Minutes\n"
+							"- 5 monsters will spawn every 7 seconds\n"
+							"- DON'T GET POPPED UP BY BERSERKS\n"
+							"- DO NOT JUMP!!!!\n"
+							"- A new Weapon & Health packs every wave\n"
+							"- GOAL: Survive all 5 Waves\n"
+							"- Final wave will be a boss wave");
 }
 
 /*

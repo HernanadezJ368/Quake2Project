@@ -1628,7 +1628,7 @@ always owned, never in the world
 		"models/items/ammo/slugs/medium/tris.md2", 0,
 		NULL,
 /* icon */		"a_slugs",
-/* pickup */	"Slugs",
+/* pickup */	"Slugs""Rockets""Cells""Bullets""Shells",
 /* width */		3,
 		10,
 		NULL,

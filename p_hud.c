@@ -4,9 +4,7 @@
 
 /*
 ======================================================================
-
 INTERMISSION
-
 ======================================================================
 */
 
@@ -139,7 +137,6 @@ void BeginIntermission (edict_t *targ)
 /*
 ==================
 DeathmatchScoreboardMessage
-
 ==================
 */
 void DeathmatchScoreboardMessage (edict_t *ent, edict_t *killer)
@@ -194,22 +191,21 @@ void DeathmatchScoreboardMessage (edict_t *ent, edict_t *killer)
 		cl = &game.clients[sorted[i]];
 		cl_ent = g_edicts + 1 + sorted[i];
 
-		//picnum = gi.imageindex ("i_fixme");
+		picnum = gi.imageindex ("i_fixme");
 		x = (i>=6) ? 160 : 0;
 		y = 32 + 32 * (i%6);
-		//gi.centerprintf(ent, "%i", y);
 
 		// add a dogtag
-		//if (cl_ent == ent)
-		tag = "tag2";
-		//else if (cl_ent == killer)
-			//tag = "tag2";
-		//else
-			//tag = NULL;
+		if (cl_ent == ent)
+			tag = "tag1";
+		else if (cl_ent == killer)
+			tag = "tag2";
+		else
+			tag = NULL;
 		if (tag)
 		{
 			Com_sprintf (entry, sizeof(entry),
-				"xv %i yv %i picn %s ",x-225, -175, tag);
+				"xv %i yv %i picn %s ",x+32, y, tag);
 			j = strlen(entry);
 			if (stringlength + j > 1024)
 				break;
@@ -219,26 +215,23 @@ void DeathmatchScoreboardMessage (edict_t *ent, edict_t *killer)
 
 		// send the layout
 		Com_sprintf (entry, sizeof(entry),
-			"client %i %i %i %i %f %i %i ",
-			x-239, y-209, 1, cl->resp.score, level.time, (level.framenum - cl->resp.enterframe)/600);
+			"client %i %i %i %i %i %i ",
+			x, y, sorted[i], cl->resp.score, cl->ping, (level.framenum - cl->resp.enterframe)/600);
 		j = strlen(entry);
 		if (stringlength + j > 1024)
 			break;
 		strcpy (string + stringlength, entry);
 		stringlength += j;
-		//gi.centerprintf(ent, "%i", stringlength);
 	}
 
 	gi.WriteByte (svc_layout);
 	gi.WriteString (string);
-	//gi.WriteString ("TEST");
 }
 
 
 /*
 ==================
 DeathmatchScoreboard
-
 Draw instead of help message.
 Note that it isn't that hard to overflow the 1400 byte message limit!
 ==================
@@ -253,7 +246,6 @@ void DeathmatchScoreboard (edict_t *ent)
 /*
 ==================
 Cmd_Score_f
-
 Display the scoreboard
 ==================
 */
@@ -279,7 +271,6 @@ void Cmd_Score_f (edict_t *ent)
 /*
 ==================
 HelpComputer
-
 Draw help computer.
 ==================
 */
@@ -287,7 +278,6 @@ void HelpComputer (edict_t *ent)
 {
 	char	string[1024];
 	char	*sk;
-	gclient_t	*cl;
 
 	if (skill->value == 0)
 		sk = "easy";
@@ -319,19 +309,26 @@ void HelpComputer (edict_t *ent)
 	gi.WriteString (string);
 	gi.unicast (ent, true);
 }
+void TEST (edict_t *ent)
+{
+	char string[1024];
+	Com_sprintf (string, sizeof(string), "xv -225 yv -175 picn victory");
+	gi.WriteByte (svc_layout);
+	gi.WriteString (string);
+	gi.unicast (ent, true);
+}
 
 
 /*
 ==================
 Cmd_Help_f
-
 Display the current help message
 ==================
 */
 void Cmd_Help_f (edict_t *ent)
 {
 	// this is for backwards compatability
-	if (!deathmatch->value)
+	if (deathmatch->value)
 	{
 		Cmd_Score_f (ent);
 		return;
