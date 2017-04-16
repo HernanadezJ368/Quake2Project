@@ -12,9 +12,9 @@ static int countdown = 0;
 static int currentWave = 0;
 void ClientUserinfoChanged (edict_t *ent, char *userinfo);
 static int WAVE2TIME = 40;
-static int WAVE3TIME = 55;
-static int WAVE4TIME = 60;
-static int WAVE5TIME= 75;
+static int WAVE3TIME = 65;
+static int WAVE4TIME = 90;
+static int WAVE5TIME= 120;
 
 void SP_misc_teleporter_dest (edict_t *ent);
 
@@ -1817,7 +1817,7 @@ void spawnChaingun(){
 	gi.linkentity(item);
 	SpawnItem (item, it);
 }
-"Slugs""Rockets""Cells""Bullets""Shells"
+//"Slugs""Rockets""Cells""Bullets""Shells"
 void spawnAmmoSlugs(){
 	it = FindItem("Bullets");
 	item = G_Spawn();
@@ -1868,13 +1868,18 @@ void spawnAmmoShells(){
 	gi.linkentity(item);
 	SpawnItem (item, it);
 }
-void spawnMobs ()
+edict_t *Mob;
+void spawnMobs (int killthem)
 {
 	int x, y, z;
 	int monsterNum;
-	edict_t *Mob;
+	//edict_t *Mob;
 	for (monsterNum = 0; monsterNum < 5; monsterNum++)
 	{
+		if(killthem == 1){
+			G_FreeEdict(Mob);
+			break;
+		}
 		Mob = G_Spawn();
 		SP_monster_berserk(Mob);
 		switch(monsterNum){
@@ -1924,7 +1929,8 @@ void WaveOne (edict_t *PLAYER)
 	char	string[1024];
 	if(bufferFlag == 1 || level.time > buffer)
 	{
-		spawnMobs();
+		if((level.total_monsters - level.killed_monsters) < 32)
+			spawnMobs(0);
 		buffer = level.time + 7;
 		bufferFlag = 0;
 	}
@@ -1934,7 +1940,7 @@ void WaveOne (edict_t *PLAYER)
 		if (level.time == WAVE2TIME + 1){
 			spawnShotgun();
 			PLAYER->health = 1000;
-			spawnammo();
+			//spawnammo();
 		}
 		if(level.time > WAVE2TIME+10){
 			//TEST(PLAYER);
@@ -1952,7 +1958,8 @@ void WaveTwo (edict_t *PLAYER)
 	//TEST(PLAYER);
 	if(bufferFlag == 1 || level.time > buffer)
 	{
-		spawnMobs();
+		if((level.total_monsters - level.killed_monsters) < 32)
+			spawnMobs(0);
 		buffer = level.time + 7;
 		bufferFlag = 0;
 	}
@@ -1977,7 +1984,8 @@ void WaveThree (edict_t *PLAYER)
 {
 	if(bufferFlag == 1 || level.time > buffer)
 	{
-		spawnMobs();
+		if((level.total_monsters - level.killed_monsters) < 32)
+			spawnMobs(0);
 		buffer = level.time + 10;
 		bufferFlag = 0;
 	}
@@ -2002,7 +2010,8 @@ void WaveFour (edict_t *PLAYER)
 {
 	if(bufferFlag == 1 || level.time > buffer)
 	{
-		spawnMobs();
+		if((level.total_monsters - level.killed_monsters) < 32)
+			spawnMobs(0);
 		buffer = level.time + 7;
 		bufferFlag = 0;
 	}

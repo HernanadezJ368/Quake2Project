@@ -274,6 +274,11 @@ HelpComputer
 Draw help computer.
 ==================
 */
+static int WAVE2TIME = 40;
+static int WAVE3TIME = 65;
+static int WAVE4TIME = 90;
+static int WAVE5TIME= 120;
+static int displayWave = 1;
 void HelpComputer (edict_t *ent)
 {
 	char	string[1024];
@@ -289,21 +294,26 @@ void HelpComputer (edict_t *ent)
 		sk = "hard+";
 
 	// send the layout
+	if(level.time > WAVE2TIME && level.time < WAVE3TIME)
+		displayWave = 2;
+	if(level.time > WAVE3TIME && level.time < WAVE4TIME)
+		displayWave = 3;
+	if(level.time > WAVE4TIME && level.time < WAVE5TIME)
+		displayWave = 4;
+	if(level.time > WAVE5TIME)
+		displayWave = 5;
+
 	Com_sprintf (string, sizeof(string),
 		"xv -225 yv -175 picn inventory "			// background
-		"xv -55 yv -171 string2 \"%s\" "		// skill
-		"xv -257 yv -159 cstring2 \"%f\" "		// level name
-		"xv -257 yv -129 cstring2 \"%s\" "		// help 1
-		"xv -257 yv -73 cstring2 \"%s\" "		// help 2
-		"xv -207 yv -19 string2 \" kills     goals    secrets\" "
-		"xv -207 yv -11 string2 \"  %3i      %i/%i       %i/%i\" ", 
-		sk,
+		"xv -257 yv -121 cstring2 \" CURRENT TIME \" "		
+		"xv -257 yv -111 cstring2 \"%f\" "		// Current Time
+		"xv -257 yv -92 cstring2 \" CURRENT WAVE \" "
+		"xv -257 yv -82 cstring2 \"%i\" "		// Current Wave
+		"xv -257 yv -68 cstring2 \" ZOMBIES KILLED \" "		
+		"xv -257 yv -58 cstring2 \"%i\" ", // Number of monsters killed
 		level.time,
-		game.helpmessage1,
-		game.helpmessage2,
-		level.killed_monsters, 
-		level.found_goals, level.total_goals,
-		level.found_secrets, level.total_secrets);
+		displayWave,
+		level.killed_monsters);
 
 	gi.WriteByte (svc_layout);
 	gi.WriteString (string);
