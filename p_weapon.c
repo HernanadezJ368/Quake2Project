@@ -676,7 +676,7 @@ void Weapon_Grenade (edict_t *ent)
 GRENADE LAUNCHER
 ======================================================================
 */
-
+void fire_grenade4Launcher (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed, float timer, float damage_radius);
 void weapon_grenadelauncher_fire (edict_t *ent)
 {
 	vec3_t	offset;
@@ -696,7 +696,7 @@ void weapon_grenadelauncher_fire (edict_t *ent)
 	VectorScale (forward, -2, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -1;
 
-	fire_grenade (ent, start, forward, damage, 600, 2.5, radius);
+	fire_grenade4Launcher (ent, start, forward, damage, 600, 1, 350);
 
 	gi.WriteByte (svc_muzzleflash);
 	gi.WriteShort (ent-g_edicts);

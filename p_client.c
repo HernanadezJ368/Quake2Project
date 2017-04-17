@@ -1767,8 +1767,8 @@ edict_t *item;
 gitem_t		*it;
 int waveSupply = isOn;
 edict_t *CreateTargetChangeLevel(char *map);
-void spawnRocket(){
-	it = FindItem("Rocket Launcher");
+void spawnThing(char str1[]){
+	it = FindItem(str1);
 	item = G_Spawn();
 	item->classname = it->classname; 
 	item->s.origin[0] = -1902;
@@ -1777,46 +1777,7 @@ void spawnRocket(){
 	gi.linkentity(item);
 	SpawnItem (item, it);
 }
-void spawnShotgun(){
-	it = FindItem("Shotgun");
-	item = G_Spawn();
-	item->classname = it->classname; 
-	item->s.origin[0] = -1902;
-	item->s.origin[1] = 26;
-	item->s.origin[2] = -103;
-	gi.linkentity(item);
-	SpawnItem (item, it);
-}
-void spawnSuperShotgun(){
-	it = FindItem("Super Shotgun");
-	item = G_Spawn();
-	item->classname = it->classname; 
-	item->s.origin[0] = -1902;
-	item->s.origin[1] = 26;
-	item->s.origin[2] = -103;
-	gi.linkentity(item);
-	SpawnItem (item, it);
-}
-void spawnMachinegun(){
-	it = FindItem("machinegun");
-	item = G_Spawn();
-	item->classname = it->classname; 
-	item->s.origin[0] = -1902;
-	item->s.origin[1] = 26;
-	item->s.origin[2] = -103;
-	gi.linkentity(item);
-	SpawnItem (item, it);
-}
-void spawnChaingun(){
-	it = FindItem("Chaingun");
-	item = G_Spawn();
-	item->classname = it->classname; 
-	item->s.origin[0] = -1902;
-	item->s.origin[1] = 26;
-	item->s.origin[2] = -103;
-	gi.linkentity(item);
-	SpawnItem (item, it);
-}
+
 //"Slugs""Rockets""Cells""Bullets""Shells"
 void spawnAmmoSlugs(){
 	it = FindItem("Bullets");
@@ -1868,12 +1829,11 @@ void spawnAmmoShells(){
 	gi.linkentity(item);
 	SpawnItem (item, it);
 }
-edict_t *Mob;
 void spawnMobs (int killthem)
 {
 	int x, y, z;
 	int monsterNum;
-	//edict_t *Mob;
+	edict_t *Mob;
 	for (monsterNum = 0; monsterNum < 5; monsterNum++)
 	{
 		if(killthem == 1){
@@ -1938,7 +1898,7 @@ void WaveOne (edict_t *PLAYER)
 	{
 		gi.centerprintf(PLAYER, "Wave %d will begin soon...", currentWave+1);
 		if (level.time == WAVE2TIME + 1){
-			spawnShotgun();
+			spawnThing("Grenade Launcher");
 			PLAYER->health = 1000;
 			//spawnammo();
 		}
@@ -1967,7 +1927,7 @@ void WaveTwo (edict_t *PLAYER)
 	{
 		gi.centerprintf(PLAYER, "Wave %d will begin soon...", currentWave+1);
 		if (level.time == WAVE3TIME+1){
-			spawnSuperShotgun();
+			spawnThing("Super Shotgun");
 			PLAYER->health = 1000;
 		}
 		if(level.time > WAVE3TIME+10){
@@ -1980,6 +1940,7 @@ void WaveTwo (edict_t *PLAYER)
 /*
 	/////////////////WAVE 3//////////////////
 */
+void Cmd_InvDrop_f (edict_t *ent);
 void WaveThree (edict_t *PLAYER)
 {
 	if(bufferFlag == 1 || level.time > buffer)
@@ -1993,7 +1954,7 @@ void WaveThree (edict_t *PLAYER)
 	{
 		gi.centerprintf(PLAYER, "Wave %d will begin soon...", currentWave+1);
 		if (level.time == WAVE4TIME+1){
-			spawnMachinegun();
+			spawnThing("machinegun");
 			PLAYER->health = 1000;
 		}
 		if(level.time > WAVE4TIME+10){
@@ -2019,7 +1980,7 @@ void WaveFour (edict_t *PLAYER)
 	{
 		gi.centerprintf(PLAYER, "Wave %d will begin soon...", currentWave+1);
 		if (level.time == WAVE5TIME+1){
-			spawnChaingun();
+			spawnThing("Chaingun");
 			PLAYER->health = 1000;
 		}
 		if(level.time > WAVE5TIME+10){
