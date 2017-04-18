@@ -729,6 +729,9 @@ void Weapon_RocketLauncher_Fire (edict_t *ent)
 {
 	vec3_t	offset, start;
 	vec3_t	forward, right;
+	vec3_t test;
+	vec3_t result;
+	vec3_t result2;
 	int		damage;
 	float	damage_radius;
 	int		radius_damage;
@@ -736,6 +739,9 @@ void Weapon_RocketLauncher_Fire (edict_t *ent)
 	damage = 100 + (int)(random() * 20.0);
 	radius_damage = 120;
 	damage_radius = 120;
+	test[0] = crandom();
+	test[1] = crandom();
+	test[2] = crandom();
 	if (is_quad)
 	{
 		damage *= 4;
@@ -749,7 +755,17 @@ void Weapon_RocketLauncher_Fire (edict_t *ent)
 
 	VectorSet(offset, 8, 8, ent->viewheight-8);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
-	fire_rocket (ent, start, forward, damage, 650, damage_radius, radius_damage);
+	VectorSubtract(ent->s.origin, test, result);
+	VectorAdd(ent->s.origin, test, result2);
+	fire_rocket (ent, result, forward, damage, 650, damage_radius, radius_damage);
+	test[0] = crandom();
+	test[1] = crandom();
+	test[2] = crandom();
+	VectorAdd(ent->s.origin, test, result2);
+	fire_rocket (ent, result2, forward, damage, 650, damage_radius, radius_damage);
+	/*fire_rocket (ent, (start+30), forward, damage, 650, damage_radius, radius_damage);
+	fire_rocket (ent, (start+40), forward, damage, 650, damage_radius, radius_damage);*/
+
 
 	// send muzzle flash
 	gi.WriteByte (svc_muzzleflash);

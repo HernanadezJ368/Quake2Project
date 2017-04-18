@@ -15,7 +15,6 @@ static int WAVE2TIME = 40;
 static int WAVE3TIME = 65;
 static int WAVE4TIME = 90;
 static int WAVE5TIME= 120;
-
 void SP_misc_teleporter_dest (edict_t *ent);
 
 //
@@ -1836,7 +1835,7 @@ void spawnMobs (int killthem)
 	edict_t *Mob;
 	for (monsterNum = 0; monsterNum < 5; monsterNum++)
 	{
-		if(killthem == 1){
+		/*if(killthem == 1){
 			G_FreeEdict(Mob);
 			break;
 		}
@@ -1872,7 +1871,7 @@ void spawnMobs (int killthem)
 		Mob->s.origin[0]= x;
 		Mob->s.origin[1]= y; 
 		Mob->s.origin[2]= z;
-		gi.linkentity(Mob);
+		gi.linkentity(Mob);*/
 	}
 }
 /*
@@ -1898,7 +1897,7 @@ void WaveOne (edict_t *PLAYER)
 	{
 		gi.centerprintf(PLAYER, "Wave %d will begin soon...", currentWave+1);
 		if (level.time == WAVE2TIME + 1){
-			spawnThing("Grenade Launcher");
+			spawnThing("Rocket Launcher");
 			PLAYER->health = 1000;
 			//spawnammo();
 		}
@@ -2069,6 +2068,7 @@ void ClientBeginServerFrame (edict_t *ent) //BEGINNING OF GAME
 	if(TPPlayer == 25)
 	{
 		TpToStartingSpot (ent);
+		ent->speed = 1;
 		/*spawnShotgun();
 		spawnSuperShotgun();
 		spawnMachinegun();

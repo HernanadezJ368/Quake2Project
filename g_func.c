@@ -1012,7 +1012,7 @@ void Think_CalcMoveSpeed (edict_t *self)
 			ent->moveinfo.decel = newspeed;
 		else
 			ent->moveinfo.decel *= ratio;
-		ent->moveinfo.speed = newspeed;
+		ent->moveinfo.speed = 180;//newspeed;
 	}
 }
 
