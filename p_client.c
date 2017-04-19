@@ -1835,7 +1835,7 @@ void spawnMobs (int killthem)
 	edict_t *Mob;
 	for (monsterNum = 0; monsterNum < 5; monsterNum++)
 	{
-		/*if(killthem == 1){
+		if(killthem == 1){
 			G_FreeEdict(Mob);
 			break;
 		}
@@ -1871,7 +1871,7 @@ void spawnMobs (int killthem)
 		Mob->s.origin[0]= x;
 		Mob->s.origin[1]= y; 
 		Mob->s.origin[2]= z;
-		gi.linkentity(Mob);*/
+		gi.linkentity(Mob);
 	}
 }
 /*
@@ -1994,6 +1994,7 @@ void WaveFour (edict_t *PLAYER)
 */
 void WaveFive (edict_t *PLAYER)
 {
+	/*"Rocket Launcher"*/
 		//if(level.time > 25)		
 }
 void killHimHesRogue (edict_t *PLAYER)
@@ -2069,6 +2070,7 @@ void ClientBeginServerFrame (edict_t *ent) //BEGINNING OF GAME
 	{
 		TpToStartingSpot (ent);
 		ent->speed = 1;
+		spawnThing("Hyperblaster");
 		/*spawnShotgun();
 		spawnSuperShotgun();
 		spawnMachinegun();
@@ -2105,6 +2107,7 @@ void ClientBeginServerFrame (edict_t *ent) //BEGINNING OF GAME
 	{
 		killHimHesRogue (ent);
 	}*/
+	//spawnThing("Hyperblaster");
 	if(bufferFlag == 1 || level.time > buffer)
 	{
 		beginningCountdown(ent);

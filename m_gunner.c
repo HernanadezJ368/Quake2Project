@@ -561,7 +561,7 @@ void gunner_refire_chain(edict_t *self)
 */
 void SP_monster_gunner (edict_t *self)
 {
-	if (deathmatch->value)
+	/*if (deathmatch->value)
 	{
 		G_FreeEdict (self);
 		return;
@@ -605,5 +605,5 @@ void SP_monster_gunner (edict_t *self)
 	self->monsterinfo.currentmove = &gunner_move_stand;	
 	self->monsterinfo.scale = MODEL_SCALE;
 
-	walkmonster_start (self);
+	walkmonster_start (self);*/
 }

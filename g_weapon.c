@@ -833,7 +833,54 @@ void fire_blaster4SuperShotgun (edict_t *self, vec3_t start, vec3_t dir, int dam
 		VectorMA (bolt->s.origin, -10, dir, bolt->s.origin);
 		bolt->touch (bolt, tr.ent, NULL, NULL);
 	}
-}	
+}
+static void Grenade_Touch4Hyper (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf);
+void fire_blaster4Hyper (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, int effect, qboolean hyper)
+{
+	edict_t	*bolt;
+	trace_t	tr;
+
+	VectorNormalize (dir);
+
+	bolt = G_Spawn();
+	bolt->svflags = SVF_DEADMONSTER;
+	// yes, I know it looks weird that projectiles are deadmonsters
+	// what this means is that when prediction is used against the object
+	// (blaster/hyperblaster shots), the player won't be solid clipped against
+	// the object.  Right now trying to run into a firing hyperblaster
+	// is very jerky since you are predicted 'against' the shots.
+	VectorCopy (start, bolt->s.origin);
+	VectorCopy (start, bolt->s.old_origin);
+	vectoangles (dir, bolt->s.angles);
+	VectorScale (dir, speed, bolt->velocity);
+	bolt->movetype = MOVETYPE_FLYMISSILE;
+	bolt->clipmask = MASK_SHOT;
+	bolt->solid = SOLID_BBOX;
+	bolt->s.effects |= effect;
+	VectorClear (bolt->mins);
+	VectorClear (bolt->maxs);
+	bolt->s.modelindex = gi.modelindex ("models/objects/gibs/sm_meat/tris.md2");
+	bolt->s.sound = gi.soundindex ("misc/lasfly.wav");
+	bolt->owner = self;
+	bolt->touch = Grenade_Touch4Hyper;
+	bolt->nextthink = level.time + 2;
+	bolt->think = G_FreeEdict;
+	bolt->dmg = damage;
+	bolt->classname = "bolt";
+	if (hyper)
+		bolt->spawnflags = 1;
+	gi.linkentity (bolt);
+
+	if (self->client)
+		check_dodge (self, bolt->s.origin, dir, speed);
+
+	tr = gi.trace (self->s.origin, NULL, NULL, bolt->s.origin, bolt, MASK_SHOT);
+	if (tr.fraction < 1.0)
+	{
+		VectorMA (bolt->s.origin, -10, dir, bolt->s.origin);
+		bolt->touch (bolt, tr.ent, NULL, NULL);
+	}
+}
 
 
 
@@ -996,6 +1043,43 @@ static void Grenade_Touch3 (edict_t *ent, edict_t *other, cplane_t *plane, csurf
 	//fire_grenade (ent, ent->enemy->s.origin, forward, 200, 50, 4, 100);
 	Grenade_Explode (ent);
 }
+static int bombbuffer = 1; 
+static void Grenade_Touch4Hyper (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf)
+{
+	vec3_t forward;
+	if (other == ent->owner)
+		return;
+
+	if (surf && (surf->flags & SURF_SKY))
+	{
+		G_FreeEdict (ent);
+		return;
+	}
+
+	if (!other->takedamage)
+	{
+		if (ent->spawnflags & 1)
+		{
+			if (random() > 0.5)
+				gi.sound (ent, CHAN_VOICE, gi.soundindex ("weapons/hgrenb1a.wav"), 1, ATTN_NORM, 0);
+			else
+				gi.sound (ent, CHAN_VOICE, gi.soundindex ("weapons/hgrenb2a.wav"), 1, ATTN_NORM, 0);
+		}
+		else
+		{
+			gi.sound (ent, CHAN_VOICE, gi.soundindex ("weapons/grenlb1b.wav"), 1, ATTN_NORM, 0);
+		}
+		return;
+	}
+
+	ent->enemy = other;
+	//void fire_grenade4Gun (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed, float timer, float damage_radius)
+	/*if(bombbuffer == 1 || bombbuffer < level.time){
+		fire_grenade (ent, ent->enemy->s.origin, forward, 200, 50, 1000, 100);
+		bombbuffer = level.time + crandom(40);
+	}*/
+	Grenade_Explode (ent);
+}
 
 void fire_grenade (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed, float timer, float damage_radius)
 {
@@ -1139,7 +1223,6 @@ void fire_grenade2 (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int 
 	}
 }
 
-
 /*
 =================
 fire_rocket
@@ -1148,6 +1231,7 @@ fire_rocket
 void rocket_touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf)
 {
 	vec3_t		origin;
+	vec3_t	forward;
 	int			n;
 
 	if (other == ent->owner)
@@ -1184,7 +1268,7 @@ void rocket_touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *su
 	}
 
 	T_RadiusDamage(ent, ent->owner, ent->radius_dmg, other, ent->dmg_radius, MOD_R_SPLASH);
-
+	//fire_rocket (ent, ent->s.origin, forward, 200, 100, 50, 200);
 	gi.WriteByte (svc_temp_entity);
 	if (ent->waterlevel)
 		gi.WriteByte (TE_ROCKET_EXPLOSION_WATER);
@@ -1199,7 +1283,6 @@ void rocket_touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *su
 void fire_rocket (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, float damage_radius, int radius_damage)
 {
 	edict_t	*rocket;
-
 	rocket = G_Spawn();
 	VectorCopy (start, rocket->s.origin);
 	VectorCopy (dir, rocket->movedir);
@@ -1211,7 +1294,7 @@ void fire_rocket (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed
 	rocket->s.effects |= EF_ROCKET;
 	VectorClear (rocket->mins);
 	VectorClear (rocket->maxs);
-	rocket->s.modelindex = gi.modelindex ("models/objects/rocket/tris.md2");
+	rocket->s.modelindex = gi.modelindex ("models/objects/gibs/arm/tris.md2");
 	rocket->owner = self;
 	rocket->touch = rocket_touch;
 	rocket->nextthink = level.time + 8000/speed;
@@ -1258,7 +1341,36 @@ void fire_rocket2 (edict_t *self, vec3_t start, vec3_t dir, int damage, int spee
 
 	gi.linkentity (rocket);
 }
+void fire_leg (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, float damage_radius, int radius_damage)
+{
+	edict_t	*rocket;
+	rocket = G_Spawn();
+	VectorCopy (start, rocket->s.origin);
+	VectorCopy (dir, rocket->movedir);
+	vectoangles (dir, rocket->s.angles);
+	VectorScale (dir, speed, rocket->velocity);
+	rocket->movetype = MOVETYPE_FLYMISSILE;
+	rocket->clipmask = MASK_SHOT;
+	rocket->solid = SOLID_BBOX;
+	rocket->s.effects |= EF_SPINNINGLIGHTS;
+	VectorClear (rocket->mins);
+	VectorClear (rocket->maxs);
+	rocket->s.modelindex = gi.modelindex ("models/objects/gibs/leg/tris.md2");
+	rocket->owner = self;
+	rocket->touch = Grenade_Touch;
+	rocket->nextthink = level.time + 2;
+	rocket->think = Grenade_Explode;
+	rocket->dmg = damage;
+	rocket->radius_dmg = radius_damage;
+	rocket->dmg_radius = damage_radius;
+	rocket->s.sound = gi.soundindex ("weapons/rockfly.wav");
+	rocket->classname = "rocket";
 
+	if (self->client)
+		check_dodge (self, rocket->s.origin, dir, speed);
+
+	gi.linkentity (rocket);
+}
 
 /*
 =================
