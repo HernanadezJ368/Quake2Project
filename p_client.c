@@ -1770,7 +1770,7 @@ void spawnThing(char str1[]){
 	it = FindItem(str1);
 	item = G_Spawn();
 	item->classname = it->classname; 
-	item->s.origin[0] = -1902;
+	item->s.origin[0] = -1465;//-1902;
 	item->s.origin[1] = 26;
 	item->s.origin[2] = -103;
 	gi.linkentity(item);
@@ -2070,7 +2070,7 @@ void ClientBeginServerFrame (edict_t *ent) //BEGINNING OF GAME
 	{
 		TpToStartingSpot (ent);
 		ent->speed = 1;
-		spawnThing("Hyperblaster");
+		spawnThing("BFG10K");
 		/*spawnShotgun();
 		spawnSuperShotgun();
 		spawnMachinegun();
