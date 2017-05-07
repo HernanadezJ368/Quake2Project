@@ -828,7 +828,6 @@ void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, in
 	else
 		gi.WriteByte (MZ_BLASTER | is_silenced);
 	gi.multicast (ent->s.origin, MULTICAST_PVS);
-	gi.dprintf("%s Player Position %s\n",vtos(ent->s.origin));
 	PlayerNoise(ent, start, PNOISE_WEAPON);
 }
 void fire_blaster4Shotgun (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, int effect, qboolean hyper);
@@ -862,24 +861,6 @@ void Blaster_Fire4Shotgun (edict_t *ent, vec3_t g_offset, int damage, qboolean h
 	gi.multicast (ent->s.origin, MULTICAST_PVS);
 
 	PlayerNoise(ent, start, PNOISE_WEAPON);
-	gi.dprintf("%sCurrent Player Position %s\n ", vtos(ent->s.origin));
-/*for (n=0 ; n<10 ; n++)
-{
-	monster = G_Spawn();
-	SP_monster_soldier_ss(monster);
-	monster->s.origin[0]= -650 - rand() % -400;
-	//- rand() % -100;
-	monster->s.origin[1]= 400 - rand() % -400;
-	monster->s.origin[2]= 0;
-	SP_monster_soldier_ss(monster);
-	gi.linkentity(ent);
-	//gi.dprintf("%s Player Position %s\n",vtos(ent->s.origin));
- }*/
-	//int number = ent->s.origin[2];
-//gi.dprintf("%s Player Position %s\n",vtos(ent->s.origin));	
-//ED_CallSpawn(ent);
-
-
 }
 void fire_rocket2 (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, float damage_radius, int radius_damage);
 void fire_blaster4SuperShotgun (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, int effect, qboolean hyper);
