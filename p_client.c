@@ -2025,13 +2025,11 @@ void ClientBeginServerFrame (edict_t *ent) //BEGINNING OF GAME
 			spawnThing("Grenade Launcher", 68);
 			spawnThing("Grenades", 108);
 			spawnThing("HyperBlaster", 148);
-			//"Slugs""Rockets""Cells""Bullets""Shells"
 			spawnThing("Slugs", -172);
 			spawnThing("Rockets", -132);
 			spawnThing("Cells", -92);
 			spawnThing("Bullets", -52);
 			spawnThing("Shells", -12);
-			spawnThing("Health", -12);
 		}
 	if(TPPlayer == 25)
 	{
