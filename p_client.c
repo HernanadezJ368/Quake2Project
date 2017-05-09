@@ -2030,7 +2030,7 @@ void ClientBeginServerFrame (edict_t *ent) //BEGINNING OF GAME
 	}
 	if(TPPlayer > 25)
 	{
-		//killHimHesRogue (ent);
+		killHimHesRogue (ent);
 	}
 	if(bufferFlag == 1 || level.time > buffer)
 	{
