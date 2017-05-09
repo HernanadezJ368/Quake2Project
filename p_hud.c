@@ -274,10 +274,10 @@ HelpComputer
 Draw help computer.
 ==================
 */
-static int WAVE2TIME = 35;
-static int WAVE3TIME = 50;
-static int WAVE4TIME = 65;
-static int WAVE5TIME= 70;
+static int WAVE2TIME = 180;
+static int WAVE3TIME = 360;
+static int WAVE4TIME = 540;
+static int WAVE5TIME= 720;
 static int displayWave = 1;
 void HelpComputer (edict_t *ent)
 {

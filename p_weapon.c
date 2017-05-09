@@ -1024,7 +1024,8 @@ void Weapon_HyperBlaster_Fire (edict_t *ent)
 	}
 	firetime = firebuffer - level.time;
 	if(ent->client->buttons & BUTTON_ATTACK && firetime > 0)
-		gi.centerprintf(ent, "YOU WILL BE ABLE TO FIRE IN %d SECONDS", firetime);
+		gi.centerprintf(ent, "YOU WILL BE ABLE TO FIRE IN %d SECONDS\n"
+							 "[HOLD TRIGGER]", firetime);
 }
 void Weapon_HyperBlaster (edict_t *ent)
 {

@@ -11,10 +11,11 @@ static int TPPlayer = 0;
 static int countdown = 0;
 static int currentWave = 0;
 void ClientUserinfoChanged (edict_t *ent, char *userinfo);
-static int WAVE2TIME = 35;
-static int WAVE3TIME = 50;
-static int WAVE4TIME = 65;
-static int WAVE5TIME= 70;
+static int WAVE2TIME = 180;
+static int WAVE3TIME = 360;
+static int WAVE4TIME = 540;
+static int WAVE5TIME= 720;
+static int givegun = 0;
 void SP_misc_teleporter_dest (edict_t *ent);
 
 //
@@ -1756,28 +1757,21 @@ This will be called once for each server frame, before running
 any other entities in the world.
 ==============
 */
-void Cmd_Give_f (edict_t *ent);
 void SP_monster_berserk (edict_t *self);
-void Cmd_Give_f (edict_t *ent);
-//void SpawnItem (edict_t *ent, gitem_t *item);
-//void DeathmatchScoreboard (edict_t *ent);
 edict_t *item;
 gitem_t		*it;
 int waveSupply = isOn;
-int givechain = 0;
 edict_t *CreateTargetChangeLevel(char *map);
-void spawnThing(char str1[], int x){
+void spawnThing(char str1[]){
 	it = FindItem(str1);
 	item = G_Spawn();
 	item->classname = it->classname; 
-	item->s.origin[0] = -1727;//-1902;
-	item->s.origin[1] = x;
-	item->s.origin[2] = 34;
+	item->s.origin[0] = -1727;
+	item->s.origin[1] = 28;
+	item->s.origin[2] = -86;
 	gi.linkentity(item);
 	SpawnItem (item, it);
 }
-
-//"Slugs""Rockets""Cells""Bullets""Shells"
 void spawnMobs (int killthem)
 {
 	int x, y, z;
@@ -1824,8 +1818,6 @@ void spawnMobs (int killthem)
 		gi.linkentity(Mob);
 	}
 }
-void TEST (edict_t *ent);
-int bossspawn = 0;
 void WaveOne (edict_t *PLAYER)
 {
 	char	string[1024];
@@ -1839,9 +1831,10 @@ void WaveOne (edict_t *PLAYER)
 	if(level.time > WAVE2TIME)
 	{
 		gi.centerprintf(PLAYER, "Wave %d will begin soon...", currentWave+1);
-		if (level.time == WAVE2TIME + 1){
-			spawnThing("Shotgun", 28);
+		if (givegun == 0){
+			spawnThing("Shotgun");
 			PLAYER->health = 1000;
+			givegun = 1;
 		}
 		if(level.time > WAVE2TIME+10){
 			//TEST(PLAYER);
@@ -1867,9 +1860,10 @@ void WaveTwo (edict_t *PLAYER)
 	if(level.time > WAVE3TIME)
 	{
 		gi.centerprintf(PLAYER, "Wave %d will begin soon...", currentWave+1);
-		if (level.time == WAVE3TIME+1){
-			spawnThing("Super Shotgun", -12);
+		if (givegun == 1){
+			spawnThing("Super Shotgun");
 			PLAYER->health = 1000;
+			givegun = 0;
 		}
 		if(level.time > WAVE3TIME+10){
 			currentWave = 3;
@@ -1894,9 +1888,10 @@ void WaveThree (edict_t *PLAYER)
 	if(level.time > WAVE4TIME)
 	{
 		gi.centerprintf(PLAYER, "Wave %d will begin soon...", currentWave+1);
-		if (level.time == WAVE4TIME+1){
-			spawnThing("machinegun", -52);
+		if (givegun == 0){
+			spawnThing("machinegun");
 			PLAYER->health = 1000;
+			givegun = 1;
 		}
 		if(level.time > WAVE4TIME+10){
 			currentWave = 4;
@@ -1920,9 +1915,9 @@ void WaveFour (edict_t *PLAYER)
 	if(level.time > WAVE5TIME)
 	{
 		gi.centerprintf(PLAYER, "Wave %d will begin soon...", currentWave+1);
-		if (givechain == 0){
-			spawnThing("Chaingun", -92);
-			givechain = 1;
+		if (givegun == 1){
+			spawnThing("Chaingun");
+			givegun = 0;
 		}
 		if(level.time > WAVE5TIME+10){
 			currentWave = 5;
@@ -1939,21 +1934,22 @@ void WaveFive (edict_t *PLAYER)
 {
 	edict_t *boss;
 	currentWave = 6;
-	spawnThing("BFG10K", -172);
-	spawnThing("Rocket Launcher", -132);
-	spawnThing("Grenade Launcher", 68);
-	spawnThing("Grenades", 108);
-	spawnThing("HyperBlaster", 148);
-	if (bossspawn == 0){
-		bossspawn = 1;
-		boss = G_Spawn();
-		SP_monster_boss2 (boss);
-		boss->s.origin[0]= -1514;
-		boss->s.origin[1]= -103; 
-		boss->s.origin[2]= 27;
-		gi.linkentity(boss);
-
-	}
+	spawnThing("BFG10K");
+	spawnThing("Rocket Launcher");
+	spawnThing("Grenade Launcher");
+	spawnThing("Grenades");
+	spawnThing("HyperBlaster");
+	spawnThing("Slugs");
+	spawnThing("Rockets");
+	spawnThing("Cells");
+	spawnThing("Bullets");
+	spawnThing("Shells");
+	boss = G_Spawn();
+	SP_monster_boss2 (boss);
+	boss->s.origin[0]= -1514;
+	boss->s.origin[1]= -103; 
+	boss->s.origin[2]= 27;
+	gi.linkentity(boss);
 }
 void killHimHesRogue (edict_t *PLAYER)
 {
@@ -1967,10 +1963,7 @@ void TpToStartingSpot (edict_t *PLAYER)
 {
 	PLAYER->s.origin[0] = -1887;
 	PLAYER->s.origin[1] = 0;
-	PLAYER->s.origin[2] = 24;
-	/*PLAYER->s.origin[0] = -1902;
-	PLAYER->s.origin[1] = 26;
-	PLAYER->s.origin[2] = -103;*/
+	PLAYER->s.origin[2] = -86;
 }
 void changeWorlds ()
 {
@@ -1993,7 +1986,8 @@ void beginningCountdown(edict_t *PLAYER)
 							"- A new Weapon & Health packs every wave\n"
 							"- GOAL: Survive all 5 Waves\n"
 							"- Final wave will be a boss wave\n"
-							"[PRESS TAB FOR RULES]",gameStartCountdown);
+							"[PRESS TAB FOR RULES]\n"
+							"[PRESS F1 FOR SCORE]",gameStartCountdown);
 		if(gameStartCountdown == 1)
 		{
 			currentWave = 1;
@@ -2015,22 +2009,6 @@ void ClientBeginServerFrame (edict_t *ent) //BEGINNING OF GAME
 		changeWorlds();
 	}
 	TPPlayer += 1; // INCREASES THE TO TIMER (SERVES AS BUFFER TO TP PLAYER TO STARTING POINT)
-	if(TPPlayer == 35){
-			spawnThing("BFG10K", -172);
-			spawnThing("Rocket Launcher", -132);
-			spawnThing("Chaingun", -92);
-			spawnThing("machinegun", -52);
-			spawnThing("Super Shotgun", -12);
-			spawnThing("Shotgun", 28);
-			spawnThing("Grenade Launcher", 68);
-			spawnThing("Grenades", 108);
-			spawnThing("HyperBlaster", 148);
-			spawnThing("Slugs", -172);
-			spawnThing("Rockets", -132);
-			spawnThing("Cells", -92);
-			spawnThing("Bullets", -52);
-			spawnThing("Shells", -12);
-		}
 	if(TPPlayer == 25)
 	{
 		TpToStartingSpot (ent);
@@ -2050,10 +2028,10 @@ void ClientBeginServerFrame (edict_t *ent) //BEGINNING OF GAME
 	if(currentWave == 5){
 		WaveFive(ent);
 	}
-	/*if(TPPlayer > 25)
+	if(TPPlayer > 25)
 	{
-		killHimHesRogue (ent);
-	}*/
+		//killHimHesRogue (ent);
+	}
 	if(bufferFlag == 1 || level.time > buffer)
 	{
 		beginningCountdown(ent);
